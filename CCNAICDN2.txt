@@ -1,0 +1,134 @@
+Syslog
+	0	Emergency
+	1	Alert
+	2	Critical
+	3	Error
+	4	Warning
+	5	Notice
+	6	Informational
+	7	Debugging
+SLA
+	Used to measure performance of network.
+	COMMANDS
+		ip sla x
+			icmp-echo (ip address)
+			frequency (x seconds to send packet)
+		ip sla schedule x life (x seconds/forever) start-time (after/hh:mm/hh:mm:ss/now/pending)
+	SHOW COMMANDS
+		show ip sla configuration
+		show ip sla statistics
+	ETC
+		Schedule must be set for icmp-echo to be used.
+STP
+	CHARACTERISTICS
+		802.1d
+			Older protocol
+			50 seconds convergence time
+		802.1w
+			Never protocol
+		PVST+
+			Cisco proprietary
+			Runs a separate 802.1d instance per VLAN
+			Adds a 12 bit extended system ID to BPDU
+		Rapid PVST+
+			Cisco proprietary
+			Runs a separate 802.1w instance per VLAN
+			Backwards compatible
+			Changes port states from Disabled/Blocking/Listening/Learning/Forwarding >> Discarding/Discarding/Discarding/Learning/Forwarding
+			DESIGNATED PORT ELECTION
+				Lowest path cost > lowest BID > port priority > lowest port number
+	PATH COST
+		10 Mb/s		100
+		100 Mb/s	19
+		1000 Mb/s	4
+		10000 Mb/s	2
+	ROOT BRIDGE ELECTION
+		Check lowest BID (Priority + MAC Address)
+	BPDU
+		Each switch comapres the parameters (BID) in the BPDU for configuration of the network.
+	PORT ROLES
+		Root port
+		Designated port
+		Non-designated port
+		Blocked port
+			Still listens to BPDUs but drop all other frames.
+		Forwarding port
+		Alternate port
+			Used by 802.1w
+		Backup port
+			Used by 802.1w
+	PORT STATES
+		Disabled
+		Blocking
+		Listening
+			Listen to BPDUs prepares to forward data frames without populating MAC address table
+		Learning
+			Listen to BPDUs and is learning the paths in the switch network.
+			Preparing to forward data frames and is populating MAC address table.
+			The delay from "Listening" to "Learning" states is called "Forward Delay" (15s by default.)
+		Forwarding
+	PORTFAST/BPDUGUARD
+		PORTFAST
+			PortFast makes port transition from blocking to forwarding immediately.
+			This can prevent DHCP problems (i.e. Host not being able to receive DHCP address due to slow convergence)
+		BPDUGUARD
+			BPDU Guard should be enabled along with PortFast
+			Makes port that receive BPDUs to go into shutdown state, preventing switching loops from happening.
+		COMMANDS
+			spanning-tree portfast bpduguard default
+	COMMANDS
+		spanning-tree vlan (x) priority (x)
+		spanning-tree vlan (x) root (primary/secondary)
+		spanning-tree mode rapid-pvst
+	SHOW COMMANDS
+		sh spanning-tree
+		sh spanning-tree summary
+ETHERCHANNEL
+	LACP
+		IEEE 802.3ad
+	PAgP
+		Cisco proprietary
+	REQUIREMENTS
+		Same speed
+		Same duplex
+		Same VLAN info
+	COMMANDS
+		int port-channel (channel)
+			Parameters (i.e. encapsulation dot1q) configured here are inherited on the interface level.
+		int > channel-group (channel) mode (active/passive & desirable/auto)
+	SHOW COMMANDS
+		sh etherchannel port-channel
+		sh etherchannel summary
+	ETC
+		When configuring switch-router port channels, ip address should be assigned to the interface port channel.
+VLAN
+	COMMANDS
+		int > switchport mode access
+			*negotiates to convert a trunk link to a non trunk link
+		int > switchport nonegotiate
+			prevents interface from generating DTP frames.
+	SHOW COMMANDS
+		show vlan
+		show interfaces trunk
+		show int (int) switchport
+VTP
+	BENEFITS
+		Allows for consistent VLAN configuration across all switches in the network.
+		VLAN trunking over mixed network such as Ethernet to ATM LANE or FDDI
+		Accurate tracking and monitoring of VLANs
+	COMMANDS
+		vtp mode server
+		vtp domain (domain name)
+		vtp password (password)
+	SHOW COMMANDS
+		sh vtp status
+	REQUIREMENTS
+		VTP version must be the same
+		VTP management domain name must be the same
+		One switch has to be configured as a VTP server
+		If a VTP password is used, all switches have to use a VTP password
+	MODES
+		Server/Client/Transparent
+	VTP PRUNING
+		COMMANDS
+			switchport trunk pruning vlan (x-x)

@@ -1,0 +1,46 @@
+IP ROUTING
+	ADMINISTRATIVE DISTANCE
+		Connected		0
+		Static			1
+		External BGP		20 (Different AS)
+		EIGRP			90
+		OSPF			110
+		RIP			120
+		External EIGRP		170 (Different routing protocols that inject their routes into EIGRP routing table)
+		Internal BGP 		200 (Same AS)
+IPV6
+	COMMON IPV6 ADDRESSES
+		::1		Loopback address
+		2000::/3	Global unicast address range
+		FC00::/7	Unique local unicast range
+		FE80::/10	Link-local unicast range
+		FF00::/8	Multicast range
+		2002::/16	Used for 6-to-4 tunneling. Allows for IPv6 packets to be transmitted over IPv4 network without configuring explicit tunnels.
+	IPV6 HEADER
+		Version:	Contains IP version
+		Traffic Class:	Equivalent of Type of Service field in IPv4
+		Flow Label:	Used to mark packets and traffic flow. A flow is a sequence of packets from a single source to destination
+		Payload Length:	Describe length of payload. (IPv4 defines the length of the entire packet)
+		Next Header:	Define next header to be read (IPv4 demands static headers with each packet)
+		Hop Limit:	Specifies the maxinum number of hops the IPv6 can traverse
+		Source Address
+		Destination Address
+		
+		DIFFERENCE BETWEEN IPV4 PACKETS
+			Internet Header Length field removed as IPv6 header is fixed at 40 bytes.
+			Flag fields needed for fragmentation is removed as fragmentation is processed differently.
+			Header Checksum field removed as Data Link layer technologies already perform checksum and error control, which forces formerly optional upper-layer checksums (i.e. UDP) to become mandatory.
+	ICMPV6 TYPES
+		1	Destination Unreachable
+		128	Echo Request
+		129	Echo Reply
+		133	Router Solicitation
+		134	Router Advertisement
+		135	Neighbor Solicitation
+		136	Neighbor Advertisement
+TELNET
+	COMMANDS
+		Ctrl+Shift+6 > x
+			Exit telnet while maintaining telnet session.
+		enable > terminal monitor
+			Enable logging to show on telnet session
