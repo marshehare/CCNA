@@ -8,6 +8,67 @@ IP ROUTING
 		RIP			120
 		External EIGRP		170 (Different routing protocols that inject their routes into EIGRP routing table)
 		Internal BGP 		200 (Same AS)
+	ROUTE SWITCHING
+		PROCESS SWITCHING
+			Look up all the routes and send packets to the one identified.
+		FAST SWITCHING
+			Cache routes after packet is sent and route following packets to same route.
+		CISCO EXPRESS FORWARDING
+			Cache routes after packet is sent and route following packets to same route.
+			Changes cache according to network topology.
+	LOST ROUTE/ROUTE POISONING
+		When routers go down, routes can be lost.
+		Route poisoning allows for dead routers to send high metric routes to tell other routers that it is a lost route.
+	ETC
+		* in routing tables refer to default route candidate. (i.e. route that is not configured as default route but chosen to be one.)
+PORT SECURITY
+	PORT VIOLATION STATES
+		PROTECT
+			Drop packets
+		RESTRICT
+			Drop packets + SNMP message
+		SHUTDOWN
+			Shutdown > err-disabled state
+VLAN
+	VOICE VLAN
+		A port can allow for a second VLAN on an access port called the Voice VLAN
+		Used to layer voice traffic atop data traffic.
+	ISL/802.1q
+		ISL is cisco proprietary while 802.1q is an IEEE standard
+		ISL encapsulates the entire frame while 802.1q inserts a 12 bit field in the frame to identify the VLAN.
+	INTERVLAN ROUTING ON A L3 SWITCH
+		1. ip routing
+		2. int vlan x > ip address x y
+	COMMANDS
+		int > switchport mode access
+			*negotiates to convert a trunk link to a non trunk link
+		int > switchport nonegotiate
+			prevents interface from generating DTP frames.
+	SHOW COMMANDS
+		show vlan
+		show interfaces trunk
+		show int (int) switchport
+VTP
+	BENEFITS
+		Allows for consistent VLAN configuration across all switches in the network.
+		VLAN trunking over mixed network such as Ethernet to ATM LANE or FDDI
+		Accurate tracking and monitoring of VLANs
+	COMMANDS
+		vtp mode server
+		vtp domain (domain name)
+		vtp password (password)
+	SHOW COMMANDS
+		sh vtp status
+	REQUIREMENTS
+		VTP version must be the same
+		VTP management domain name must be the same
+		One switch has to be configured as a VTP server
+		If a VTP password is used, all switches have to use a VTP password
+	MODES
+		Server/Client/Transparent
+	VTP PRUNING
+		COMMANDS
+			switchport trunk pruning vlan (x-x)
 IPV6
 	COMMON IPV6 ADDRESSES
 		::1		Loopback address
