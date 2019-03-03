@@ -1,3 +1,11 @@
+SWITCHING
+	FRAME PROCESSING
+		STORE-AND-FORWARD
+			Switch stores entire frame and checks FCS to determine data corruption before forwarding
+		FRAGMENTFREE
+			Switch stores first 64 bytes of the frame and checks for data corruption before forwarding.	
+		CUT-THROUGH
+			Switch forwards frame even before frame have been received. No error detection is done.
 IP ROUTING
 	ADMINISTRATIVE DISTANCE
 		Connected		0
@@ -103,5 +111,9 @@ TELNET
 	COMMANDS
 		Ctrl+Shift+6 > x
 			Exit telnet while maintaining telnet session.
+			x
+				Resume connection to session x
+			resume x
+				Resume connection to session x
 		enable > terminal monitor
 			Enable logging to show on telnet session

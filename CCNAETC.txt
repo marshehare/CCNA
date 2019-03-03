@@ -1,0 +1,8 @@
+ROMMON
+	Physically connected to devices
+	Can be used for enable password recovery
+	Booted when device cannot locate a valid IOS image or by changing the register to 0x2142
+	Valid IOS images can be loaded from flash too.
+	COMMANDS
+		confreg 0x2142
+		boot flash:x

@@ -1,4 +1,201 @@
-Syslog
+HSRP
+	Used to configure multiple physical routers to appear as a single logical one.
+	Load balancing can be achieved by using multiple VLANs and assigning a specific router to a VLAN.
+	The router will the higher HSRP priority will be elected as the active router (default 100 priority)
+	VIRTUAL HSRP IP ADDRESS
+		e.g. 0000.0c07.ac0a
+		The first 24 bits (0000.0c) are the vendor ID. HSRP being a cisco protocol, the ID is assigned to cisco.
+		The next 16 bits (07.ac) are the well known HSRP ID.
+		The last 8 bits (0a) are variable bits and represent the HSRP group number that it is assigned to. In this case, it is group 10 which is converted to hexadec.
+	COMMANDS
+		int x
+			standby (group number) ip x
+			standby (group number) name x
+			standby (group number) priority x
+WAN TECHNOLOGIES
+	TOPOLOGIES
+		P2P
+		HUB AND SPOKE
+			RECHABILITY ISSUES
+				With distance vector routing protocols, reachability issues may result from split horizon.
+				To solve this, you can disable split horizon (may cause routing loops) or configure sub interfaces.
+				With link state routing protocols, reachability issues may result from DR/BDR election.
+				To solve this, spoke routers should never be elected DR/BDR.
+		FULL MESH
+			Any site can be communicate directly with any other side.
+			A large number of virtual circuits have to be configured and maintained, making it the most expensive.
+	PROTOCOLS
+		FRAME RELAY
+		ISDN
+			Transmit voice and data over existing phone lines.
+		HDLC
+			Each vendor that uses HDLC have their own way of identifying the network layer.
+			Thus, each vendor's HDLC is proprietary to their own equipment.
+			Provides no authentication.
+		PPP
+			Industry standard protocol that is used to create point to point links between different vendor equipments.
+			AUTHENTICATION PROTOCOLS
+				PAP
+					Password sent in clear text
+					Peer controls authentication attempts
+				CHAP
+					Hashed passwords are sent across the links
+					Local router or external router controls authentication attempts
+				COMMANDS
+					int x > ppp authentication chap pap
+			MULTILINK PPP (MLP)
+				Used for load balancing.
+				Allows packets to be fragmented and sent simultaneously over mutliple P2P links to same remote address.
+				COMMANDS
+					interface Multilink1
+						ip address x y
+						ppp multilink
+						ppp multilink group 1
+			COMMANDS
+				int x > encapsulation ppp
+		PPPoE
+		Cable
+		DSL
+		MPLS
+		ATM
+		VSAT
+	TROUBLESHOOTING
+		P2P links must have the same encapsulation protocol.
+	DCE/DTE
+		Router interfaces are typically DTE and they connect to a DCE like a CSU/DSU.
+		The CSU/DSU then connects to a demarcation (the point where the ISP responsibility ends).
+		*The DCE needs to provide the clock rate to the DTE.
+	IPSEC
+		Industry framework that allows for secure data transmission over an IP-based(layer 3) network.
+		Cannot be used to encrypt non-IP traffic. Have to use a GRE tunnel for non-IP traffic and encrypt that tunnel using IPsec.
+		PROTOCOLS
+			AUTHENTICATION HEADER (AH)
+				Uses a one way hash for packet authentication.
+					1. Sender generates a one way hash
+					2. Receiver generate same one way hash
+					3. If the packet does not match, authentication will be rejected and packet will be dropped.
+			ENCAPSULATING SECURITY PAYLOAD (ESP)
+				COMPONENTS
+					CONFIDENTIALITY (ENCRYPTION)
+						Encrypt packets with symmetric encryption algorithms like DES or 3DES. Must be same on both points.
+					DATA INTEGRITY
+						Uses checksum to verify whether data was altered
+					AUTHENTICATION
+						Ensure connection is made with correct partner by authenticating source of packet by certifying source of the information.
+					ANTI-REPLAY SERVICE
+						Sequence number field allows only a unique copy of the packet to reach the destination. (i.e. packet abc reaches on sequence number 1 but dropped on sequence number 2)
+					TRAFFIC FLOW
+						Tunnel mode.
+	GRE TUNNELS
+
+EVOLUTION OF INTELLIGENT NETWORKS
+	CLOUD COMPUTING
+		SERVICE MODELS
+			IaaS (Infrastructure as a Service)
+				Provides only the network.
+			PaaS (Platform as a Service)
+				Provides the operating system and the network. (i.e. Windows Azure)
+			SaaS (Software as a Service)
+				Common software application such as databases and web servers. (i.e. AWS)
+	NETWORK PROGRAMMING
+		Currently, routers and switches are devices that are not virtualized. Network programming virtualizes the physical ports of these devices.
+		OLD NETWORK
+			DATA/FORWARDING PLANE
+				Responsible for forwarding frames from its enter/exit interfaces using protocols managed in the control plane
+				Data is received, the destination interface is looked up, and the forwarding of frames and packets happens.
+				Data plane relies completely on the control plane to provide information.
+			CONTROL PLANE
+				Responsible for managing and controlling any forwarding table that the data plane uses. (i.e. routing protocols like OSPF, EIGRP, RIP, IPv4, ARP, STP)
+		NEW NETWORK
+			API
+				Software Defined Networking (SDN) manages the network like a WLAN controller manage APs.
+				SDN have a central controller managing the devices which provides automatic configuration and remdiation of all devices.
+			DATA PLANE
+				Contains network elements, meaning physical or virtual devices that deals with data traffic.
+			CONTROL PLANE
+				A software solution that provides centralized control of the router and switches.
+			APPLICATION PLANE
+				Applications that communicate their network requirements towards the controller using APIs.
+				Application tells the network what to do based on business needs.
+			APIC-EM
+				Cisco SDN controller that provides centralized automation of policy based application profiles.
+	QUALITY OF SERVICE
+		Used to manage contention for network resources for better UX.
+OSPF/EIGRP
+	ADJACENCY REQUIREMENTS
+							EIGRP	OSPF
+		AS must be the same			Yes	No
+		Hello/dead timer must be the same	No	Yes
+		K value must match			Yes	-
+		Router ID must be unique		No	Yes
+OSPF
+	DEFAULT TIMERS
+		Recommended for dead timer = 4 x hello timer.
+		Hello timer:	10s
+		Dead timer:	40s
+	ROUTE CALCULATION
+		Cost of the entire path is checked.
+		Cost is calculated by reference bandwidth (default 100 Mbps) / interface bandwidth
+		Interface		Cost
+		100 Mbps		1
+		10 Mbps			10
+		1.544 Mbps		64
+	DR/BDR ELECTION
+		Highest router ID will become DR.
+		Highest router-id command > Highest loopback id > highest interface id (i.e. fa0/1)
+		COMMANDS
+			router-id x
+	ABR/ASBR ROUTERS
+		ABR routers connects to different areas
+		ASBR routers connects to a different AS (not area)(i.e. Internet)
+	LSA TYPES
+		TYPE 1 (ROUTER LINK AD)
+			Sent by every router to every other connected router in the area. (i.e. point to point routers)
+			If the router is an ABR, then it will send LSAs to all neighbors in all the areas.
+			Contains information about its own interfaces as well as adjacent neighbors
+		TYPE 2 (NETWORK LINK AD)
+			Generated by DRs towards all routers in the same area. (i.e. routers connected to a switch)
+			Contains information about the state of the other routers in the same network.
+		TYPE 3 (SUMMARY LINK AD)
+			Generated by ABRs towards area external to the source (i.e. area 1 > area 0 && area 0 > area 1).
+			Contains network information and inter-area routes to the backbone area.
+		TYPE 4 (ASBR SUMMARY LSA)
+			Generated by ABRs towards the area external to the source (i.e. area 1 > area 0 && area 0 > area 1).
+			Similar to summary LSAs like Type 3 but Type 4 is specifically used to inform the rest of the OSPF area how to get to the ASBR.
+		TYPE 5 (EXTERNAL LINK/AS AD)
+			Generated by ASBR to advertise routes external to the OSPF AS
+			A Type 5 LSA is generated for each individual external network advertised by the ASBR
+			Flooded everywhere.
+	OSPF ADDRESSES
+		AllSPFRouters (Used for broadcasts) = 224.0.0.5 (IPV4) FF02::5 (IPV6)
+		AllDRouters (Used by DROTHERs to send LSUs/LSAcks to DR/BDR) = 224.0.0.6 (IPV4) FF02::6 (IPV6)
+	SHOW COMMANDS
+		sh ip ospf
+		sh ip ospf database
+		sh ip ospf interface
+		sh ip ospf neighbor
+		sh ip protocols
+	COMMANDS
+		router ospf x
+			network (ip) (wildcard) area (area number)
+		ipv6 router ospf x
+		int > ipv6 ospf x area x
+EIGRP
+	ROUTE CALCULATION
+		Lowest FD route will be chosen. If FD is the same, the oldest route will be chosen.
+	TOPOPLOGY TABLE
+		STATES
+			PASSIVE
+				Completed
+			ACTIVE
+				Querying for routes
+	EIGRPV6
+		ETC
+			Load balancing by default (4)
+	ETC
+		*no auto-summary
+		Variance can be set for load balancing up to x variance. (i.e. Secondary routes will be used if FD is within variance times FD)
+SYSLOG
 	0	Emergency
 	1	Alert
 	2	Critical
@@ -7,18 +204,40 @@ Syslog
 	5	Notice
 	6	Informational
 	7	Debugging
-SLA
-	Used to measure performance of network.
-	COMMANDS
-		ip sla x
-			icmp-echo (ip address)
-			frequency (x seconds to send packet)
-		ip sla schedule x life (x seconds/forever) start-time (after/hh:mm/hh:mm:ss/now/pending)
-	SHOW COMMANDS
-		show ip sla configuration
-		show ip sla statistics
-	ETC
-		Schedule must be set for icmp-echo to be used.
+TROUBLESHOOTING
+	NDP
+		IPV6 NEIGHBORS STATE
+			INCMP
+				NS sent but no reply
+			REACH
+				NS sent and replied. A path to neighbor is functioning correctly.
+			STALE
+				Neighbor have not communicated within reachable time frame.
+			DELAY
+				Occurs after STALE state, when there is no reply within "DELAY_FIRST_PROBE_TIME".
+				Path was functioning but there is no reply from neighbor within reachable time frame.
+			PROBE
+				Interface is resending NS and waiting for a reply from neighbor.
+	SLA
+		Used to measure performance of network.
+		COMMANDS
+			ip sla x
+				icmp-echo (ip address)
+				frequency (x seconds to send packet)
+			ip sla schedule x life (x seconds/forever) start-time (after/hh:mm/hh:mm:ss/now/pending)
+		SHOW COMMANDS
+			show ip sla configuration
+			show ip sla statistics
+		ETC
+			Schedule must be set for icmp-echo to be used.
+	SPAN
+		Used to analyze network traffic passing through a port and send a copy of the traffic to another port that is connected to a network analyzer.
+		I.e. Traffic is going from fa0/1 to fa0/3. SPAN allows to copy traffic from fa0/1 to fa0/2 for analysis.
+		SHOW COMMANDS
+			show monitor
+		COMMANDS
+			monitor session (x) source interface (interface)
+			monitor session (x) dest interface (interface)
 STP
 	CHARACTERISTICS
 		802.1d
@@ -76,6 +295,16 @@ STP
 			Makes port that receive BPDUs to go into shutdown state, preventing switching loops from happening.
 		COMMANDS
 			spanning-tree portfast bpduguard default
+	TOPOLOGY CHANGES (STP/PVST+)
+		1. A port that was forwarding goes down or transitions to forwarding.
+		2. The bridge notifies the root bridge by sending it a TCN on the root port.
+		3. Upstream bridge receives TCN and forward it on its root port while replying with a TCA.
+		4. Root bridge receives TCN and broadcast the event to the network with a configuration BPDU with the TC bit set.
+	TOPOLOGY CHANGES (RSTP/Rapid-PVST+)
+		1. A non-edge port that was forwarding goes down or transitions to forwarding.
+		2. Bridge immediately sends TC to all of its designated port or root port, which floods the network with the TC.
+	ETC
+		Edge ports are ports of a bridge that connects to workstations or computers.
 	COMMANDS
 		spanning-tree vlan (x) priority (x)
 		spanning-tree vlan (x) root (primary/secondary)
@@ -101,34 +330,3 @@ ETHERCHANNEL
 		sh etherchannel summary
 	ETC
 		When configuring switch-router port channels, ip address should be assigned to the interface port channel.
-VLAN
-	COMMANDS
-		int > switchport mode access
-			*negotiates to convert a trunk link to a non trunk link
-		int > switchport nonegotiate
-			prevents interface from generating DTP frames.
-	SHOW COMMANDS
-		show vlan
-		show interfaces trunk
-		show int (int) switchport
-VTP
-	BENEFITS
-		Allows for consistent VLAN configuration across all switches in the network.
-		VLAN trunking over mixed network such as Ethernet to ATM LANE or FDDI
-		Accurate tracking and monitoring of VLANs
-	COMMANDS
-		vtp mode server
-		vtp domain (domain name)
-		vtp password (password)
-	SHOW COMMANDS
-		sh vtp status
-	REQUIREMENTS
-		VTP version must be the same
-		VTP management domain name must be the same
-		One switch has to be configured as a VTP server
-		If a VTP password is used, all switches have to use a VTP password
-	MODES
-		Server/Client/Transparent
-	VTP PRUNING
-		COMMANDS
-			switchport trunk pruning vlan (x-x)
