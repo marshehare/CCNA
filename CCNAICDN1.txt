@@ -21,12 +21,19 @@ IP ROUTING
 			Look up all the routes and send packets to the one identified.
 		FAST SWITCHING
 			Cache routes after packet is sent and route following packets to same route.
+			*Does not work if routing is not configured.
 		CISCO EXPRESS FORWARDING
 			Cache routes after packet is sent and route following packets to same route.
 			Changes cache according to network topology.
+			*Does not work if routing is not configured.
 	LOST ROUTE/ROUTE POISONING
 		When routers go down, routes can be lost.
 		Route poisoning allows for dead routers to send high metric routes to tell other routers that it is a lost route.
+	POISON REVERSE
+		Distance vector routing protocols uses a poison reverse, a route poisoning technique.
+		The purpose of this technique is to reduce routing loops.
+		1. Router B informs Router A that one of its gateway is down with a metric of 16.
+		2. Router A then replies Router B that Router B has one gateway with a metric of 16. (Poison Reverse)
 	ETC
 		* in routing tables refer to default route candidate. (i.e. route that is not configured as default route but chosen to be one.)
 PORT SECURITY
@@ -88,7 +95,7 @@ IPV6
 	IPV6 HEADER
 		Version:	Contains IP version
 		Traffic Class:	Equivalent of Type of Service field in IPv4
-		Flow Label:	Used to mark packets and traffic flow. A flow is a sequence of packets from a single source to destination
+		Flow Label:	New field from IPV4. Used to mark packets and traffic flow. A flow is a sequence of packets from a single source to destination
 		Payload Length:	Describe length of payload. (IPv4 defines the length of the entire packet)
 		Next Header:	Define next header to be read (IPv4 demands static headers with each packet)
 		Hop Limit:	Specifies the maxinum number of hops the IPv6 can traverse
@@ -107,6 +114,12 @@ IPV6
 		134	Router Advertisement
 		135	Neighbor Solicitation
 		136	Neighbor Advertisement
+OSI
+	LAYER 2 FRAME FORMAT
+		PREAMBLE | START OF FRAME DELIMITER | DESTINATION ADDRESS | SOURCE ADDRESS | TYPE | DATA | FCS
+		The preamble field is used to notify receiving hosts that a frame is being sent.
+		The SOF field is used for synchronization with other hosts on the LAN.
+		The type field indicates the protocol that is intended to receive the frame data after processing.
 TELNET
 	COMMANDS
 		Ctrl+Shift+6 > x

@@ -6,3 +6,12 @@ ROMMON
 	COMMANDS
 		confreg 0x2142
 		boot flash:x
+SSH
+	SSH v1 provides stronger encryption than v2
+	AES256 is the strongest encryption algorithm.
+	COMMANDS
+		ssh -v 1/2 -c des/3des/aes256-cbc/..
+TRACEROUTE
+	Time To Live (TTL) is the number of hops the packet will hop between routers before being dropped.
+	When the packet is dropped, the router sends a reply back to the source.
+	Traceroute sends incremental TTL packets to identify all the routers between source and destination.

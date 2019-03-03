@@ -2,6 +2,17 @@ HSRP
 	Used to configure multiple physical routers to appear as a single logical one.
 	Load balancing can be achieved by using multiple VLANs and assigning a specific router to a VLAN.
 	The router will the higher HSRP priority will be elected as the active router (default 100 priority)
+	If the priority is the same, the tiebreaker will the highest IP address.
+	STATES
+		1. Init
+		2. Learn
+		3. Listen
+			All routers other than the active and standby routers will be in the listening state.
+		4. Speak
+			If another router with a higher priority becomes the active router, the preempt router will be in speak state and transition to listen/standby state after it determines its standing in the group.
+		5. Standby
+		6. Active
+			Router is chosen as the active router.
 	VIRTUAL HSRP IP ADDRESS
 		e.g. 0000.0c07.ac0a
 		The first 24 bits (0000.0c) are the vendor ID. HSRP being a cisco protocol, the ID is assigned to cisco.
@@ -10,6 +21,8 @@ HSRP
 	COMMANDS
 		int x
 			standby (group number) ip x
+			standby (group number) preempt
+				Needed to activate HSRP when active router goes down.
 			standby (group number) name x
 			standby (group number) priority x
 WAN TECHNOLOGIES
@@ -43,6 +56,12 @@ WAN TECHNOLOGIES
 					Local router or external router controls authentication attempts
 				COMMANDS
 					int x > ppp authentication chap pap
+			PPPoE
+				COMMANDS
+					ip address negotiated
+						Configure for PPPoE dialer interface to obtain IP address via PPP/IPCP
+					ip address dhcp
+						Configure for PPPoE dialer interface to obtain IP address via dhcp
 			MULTILINK PPP (MLP)
 				Used for load balancing.
 				Allows packets to be fragmented and sent simultaneously over mutliple P2P links to same remote address.
@@ -75,6 +94,8 @@ WAN TECHNOLOGIES
 					2. Receiver generate same one way hash
 					3. If the packet does not match, authentication will be rejected and packet will be dropped.
 			ENCAPSULATING SECURITY PAYLOAD (ESP)
+				Encrypts an IP packet and encapsulate it as the payload of a new packet.
+				Because the entire packet is encrypted, the data payload and header information remains confidential.
 				COMPONENTS
 					CONFIDENTIALITY (ENCRYPTION)
 						Encrypt packets with symmetric encryption algorithms like DES or 3DES. Must be same on both points.
@@ -86,6 +107,8 @@ WAN TECHNOLOGIES
 						Sequence number field allows only a unique copy of the packet to reach the destination. (i.e. packet abc reaches on sequence number 1 but dropped on sequence number 2)
 					TRAFFIC FLOW
 						Tunnel mode.
+			HASH-BASED MESSAGE AUTHENTICATION CODE (HMAC)
+				A mechanism that uses a hash function to verify the integrity of data trasmitted over a VPN.
 	GRE TUNNELS
 
 EVOLUTION OF INTELLIGENT NETWORKS
@@ -119,8 +142,48 @@ EVOLUTION OF INTELLIGENT NETWORKS
 				Application tells the network what to do based on business needs.
 			APIC-EM
 				Cisco SDN controller that provides centralized automation of policy based application profiles.
+				PATH TRACE TOOL
+					Allows to examine path of packet from source to destination. Used for ACL analysis.
+					When the tool encounters an ACL, it analyzes the entries of the ACL.
+					Each ACL is analyzed independently and the trace will not stop if an individual ACL denies traffic.
 	QUALITY OF SERVICE
 		Used to manage contention for network resources for better UX.
+		SHAPING/POLICING TRAFFIC
+			SHAPING
+				Delaying traffic.
+			POLICING
+				Dropping traffic.
+		IntServ/DiffServ
+			BEST-EFFORT DELIVERY
+			INTEGRATED SERVICES MODEL
+				Uses Resource Reservation Protocol (RSVP) to create a high-priority path in advance of the transmission.
+				Usually used for voice traffic.
+				RSVP reserves bandwidth for voice traffic in advance of trasmission.
+				Lacks scalability as reserved bandwidth will go up.
+			DIFFERENTIATED SERVICES MODEL
+				Does not use RSVP for bandwidth reservation like IntServ.
+				Allows each router to make separate decision on how to best forward the packet
+				The Per-Hop Behavior (PHB) allows prioritization of voice traffic while keeping max bandwidth available to non-priority traffic
+		QUEUEING
+			FIFO
+			WEIGHTED FAIR QUEUEING
+				FLOW BASED WFQ
+					Default queueing scheme for serial interfaces running at E1 or lower.
+					Low volume conversations are queued and sent first and high volume are queued after and sent later.
+				DISTRIBUTED WFQ
+				DISTRIBUTED CLASS BASED WFQ
+				CLASS BASED WFQ
+				TAIL DROP
+					Drop packets after the queue on the router is full.
+				GLOBAL SYNCHRONIZATION
+					When packets are dropped because of tail drop, the transmission rate decreases.
+					Because transmission rate decreases, bandwidth is underutilized. Transmission rate then increases again.
+					This up and down transmission speed is never "just right"
+				WEIGHTED RANDOM/RANDOM EARLY DETECTION (WRED/RED)
+					Combats global sync by dropping packets before the queue is full.
+					WRED drops packets based on "Precedence (IP Prec)" or "Differentiated Services Code Point (DSCP)"
+		TRUST BOUNDARY
+			Borders of network whereby packet markings (identify traffic such as voice, data, video) are not trusted.
 OSPF/EIGRP
 	ADJACENCY REQUIREMENTS
 							EIGRP	OSPF
@@ -204,6 +267,13 @@ SYSLOG
 	5	Notice
 	6	Informational
 	7	Debugging
+	COMMANDS
+		service timestamps debug datetime (msec)
+			Configure time display of debugs. (msec) adds milliseconds to timestamps.
+		logging history size x
+			Configure size of router's logging history table.
+		logging facility (facility-type)
+			Configure logging of different type of logs (i.e daemon, cron, etc) (default of local7)
 TROUBLESHOOTING
 	NDP
 		IPV6 NEIGHBORS STATE
