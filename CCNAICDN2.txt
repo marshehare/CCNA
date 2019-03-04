@@ -188,8 +188,8 @@ OSPF/EIGRP
 	ADJACENCY REQUIREMENTS
 							EIGRP	OSPF
 		AS must be the same			Yes	No
-		Hello/dead timer must be the same	No	Yes
 		K value must match			Yes	-
+		Hello/dead timer must be the same	No	Yes
 		Router ID must be unique		No	Yes
 OSPF
 	DEFAULT TIMERS

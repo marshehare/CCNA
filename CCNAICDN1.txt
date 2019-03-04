@@ -46,9 +46,9 @@ IP ROUTING
 PORT SECURITY
 	PORT VIOLATION STATES
 		PROTECT
-			Drop packets
+			Drop packets but does not increase security violation counter.
 		RESTRICT
-			Drop packets + SNMP message
+			Drop packets + SNMP message + increase security violation counter.
 		SHUTDOWN
 			Shutdown > err-disabled state
 VLAN
@@ -64,6 +64,7 @@ VLAN
 	COMMANDS
 		int > switchport mode access
 			*negotiates to convert a trunk link to a non trunk link
+			Stops generating DTP frames when connected to a host?
 		int > switchport nonegotiate
 			prevents interface from generating DTP frames.
 	SHOW COMMANDS
