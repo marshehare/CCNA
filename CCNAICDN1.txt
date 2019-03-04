@@ -6,6 +6,8 @@ SWITCHING
 			Switch stores first 64 bytes of the frame and checks for data corruption before forwarding.	
 		CUT-THROUGH
 			Switch forwards frame even before frame have been received. No error detection is done.
+	CONTENT ADDRESSABLE MEMORY (CAM) TABLE
+		Stores information of incoming frames (source MAC addresses, switch port the frame arrived on, associated VLAN parameter.)
 IP ROUTING
 	ADMINISTRATIVE DISTANCE
 		Connected		0
@@ -34,6 +36,11 @@ IP ROUTING
 		The purpose of this technique is to reduce routing loops.
 		1. Router B informs Router A that one of its gateway is down with a metric of 16.
 		2. Router A then replies Router B that Router B has one gateway with a metric of 16. (Poison Reverse)
+	PASSIVE INTERFACE
+		PROTOCOL		RECEIVE		SEND
+		RIP			YES		NO
+		EIGRP			NO		NO
+		OSPF			NO		NO
 	ETC
 		* in routing tables refer to default route candidate. (i.e. route that is not configured as default route but chosen to be one.)
 PORT SECURITY

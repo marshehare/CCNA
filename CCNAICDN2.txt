@@ -243,9 +243,13 @@ OSPF
 			network (ip) (wildcard) area (area number)
 		ipv6 router ospf x
 		int > ipv6 ospf x area x
+	ETC
+		Routers will not communicate if MTU mismatch is detected during the DBD packet exchange
 EIGRP
 	ROUTE CALCULATION
 		Lowest FD route will be chosen. If FD is the same, the oldest route will be chosen.
+	K VALUES
+		Default k values are 0 1 0 1 0 0
 	TOPOPLOGY TABLE
 		STATES
 			PASSIVE
@@ -303,6 +307,7 @@ TROUBLESHOOTING
 	SPAN
 		Used to analyze network traffic passing through a port and send a copy of the traffic to another port that is connected to a network analyzer.
 		I.e. Traffic is going from fa0/1 to fa0/3. SPAN allows to copy traffic from fa0/1 to fa0/2 for analysis.
+		SPAN destination ports no longer participates in STP, VTP, CDP or DTP.
 		SHOW COMMANDS
 			show monitor
 		COMMANDS
@@ -356,7 +361,13 @@ STP
 			Preparing to forward data frames and is populating MAC address table.
 			The delay from "Listening" to "Learning" states is called "Forward Delay" (15s by default.)
 		Forwarding
-	PORTFAST/BPDUGUARD
+	PORTFAST/BPDUGUARD/LOOPGUARD/ROOTGUARD
+		ROOTGUARD
+			Prevents new switches from becoming root bridge. Applied on per port basis
+			COMMANDS
+				spanning-tree guard root
+		LOOPGUARD
+			Prevents nondesignated ports from forming bridging loops if the steady flow of BPDUs is interrupted.
 		PORTFAST
 			PortFast makes port transition from blocking to forwarding immediately.
 			This can prevent DHCP problems (i.e. Host not being able to receive DHCP address due to slow convergence)
