@@ -145,6 +145,8 @@ WAN TECHNOLOGIES
 			Allows remote users to securely accesss the corporate network.
 		SITE-TO-SITE VPN
 			Allows a company to connect its remote sites to the corporate backbone.
+			Do not typically use client software.
+			Instead transmissions are handled by gateway device, e.g. ASA device.
 		EXTRANET VPN
 			Allows an organization's partners, customers, etc, to be connected a corporate network for business communications.
 		PROVIDER MANAGED VPN
@@ -167,6 +169,9 @@ WAN TECHNOLOGIES
 			Helps ensure right services are accessible to users and devices with centralized policy enforcement.
 
 EVOLUTION OF INTELLIGENT NETWORKS
+	STACKWISE
+		The switch with the highest priority value will be elected as the stack master.
+		Tiebreakers are switches w/ non default saved configuration > switch with highest feature set (IP with crypto image, etc) > lowest MAC
 	CLOUD COMPUTING
 		SERVICE MODELS
 			IaaS (Infrastructure as a Service)
@@ -275,6 +280,7 @@ OSPF/EIGRP
 		K value must match			Yes	-
 		Hello/dead timer must be the same	No	Yes
 		Router ID must be unique		No	Yes
+		Area					-	Yes
 OSPF
 	DEFAULT TIMERS
 		Recommended for dead timer = 4 x hello timer.

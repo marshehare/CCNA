@@ -1,3 +1,6 @@
+DHCP
+	If the DHCP server discovers and IP conflict via GARP or pings, it will remove the IP from the pool until the address conflict is resolved by the router admin.
+	If there is already a device allocated with the conflicted IP, the DHCP still would not lease that address, but instead remove it from the DHCP pool
 NTP
 	COMMANDS
 		ntp server (ip address)
