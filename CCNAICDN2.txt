@@ -3,6 +3,13 @@ HSRP
 	Load balancing can be achieved by using multiple VLANs and assigning a specific router to a VLAN.
 	The router will the higher HSRP priority will be elected as the active router (default 100 priority)
 	If the priority is the same, the tiebreaker will the highest IP address.
+	VERSIONS
+		VERSION 1
+			Group number 0 - 255
+			Format of 0000.0C07.ACXX
+		VERSION 2
+			Group number 0 - 4095
+			Format of 0000.0C9F.FXXX
 	STATES
 		1. Init
 		2. Learn
@@ -38,8 +45,12 @@ WAN TECHNOLOGIES
 			Any site can be communicate directly with any other side.
 			A large number of virtual circuits have to be configured and maintained, making it the most expensive.
 	PROTOCOLS
+		VPN
+			Cheap.
+			Allows secure traffic over untrusted networks i.e. internet.
 		FRAME RELAY
 		ISDN
+			Used as WAN backup solution to provide limited connectivity over brief period of times.
 			Transmit voice and data over existing phone lines.
 		HDLC
 			Each vendor that uses HDLC have their own way of identifying the network layer.
@@ -58,6 +69,11 @@ WAN TECHNOLOGIES
 					int x > ppp authentication chap pap
 			PPPoE
 				COMMANDS
+					int x > pppoe enable group global
+					int x > pppoe-client dial-pool-number (number)
+					interface dialer (number)
+					dialer (pool number)
+					encapsulation (type e.g. ppp)
 					ip address negotiated
 						Configure for PPPoE dialer interface to obtain IP address via PPP/IPCP
 					ip address dhcp
@@ -77,7 +93,10 @@ WAN TECHNOLOGIES
 		DSL
 		MPLS
 		ATM
+			Expensive
+			Used for time-sensitive traffic, providing simultaneous transmission of voice, video and data.
 		VSAT
+			Used if there are many locations geographically spread out in a large area.
 	TROUBLESHOOTING
 		P2P links must have the same encapsulation protocol.
 	DCE/DTE
@@ -110,6 +129,42 @@ WAN TECHNOLOGIES
 			HASH-BASED MESSAGE AUTHENTICATION CODE (HMAC)
 				A mechanism that uses a hash function to verify the integrity of data trasmitted over a VPN.
 	GRE TUNNELS
+		Offers the ability to carry dynamic routing protocol traffic.
+		Like VPNs, GRE tunnels are used to create point-to-point connections between two networks.
+		REQUIREMENTS
+			ip address
+			tunnel source
+			tunnel destination
+		COMMANDS
+			int tunnel x
+				ip address x y
+				tunnel source (ip address / interface i.e. serial 1/0)
+				tunnel destination (ip address)
+	VPN
+		REMOTE-ACCESS VPN
+			Allows remote users to securely accesss the corporate network.
+		SITE-TO-SITE VPN
+			Allows a company to connect its remote sites to the corporate backbone.
+		EXTRANET VPN
+			Allows an organization's partners, customers, etc, to be connected a corporate network for business communications.
+		PROVIDER MANAGED VPN
+			LAYER 2 MPLS VPN
+				Customer routers exchange routes directly
+				Some application need layer 2 connectivity
+				VIRTUAL PRIVATE WIRE SERVICE (VPWS)
+					Enables ethernet services over MPLS.
+				VIRTUAL PRIVATE LAN SWITCHING SERVICE (VPLS)
+					
+			LAYER 3 MPLS VPN
+				Customer routers exchange routes with SP routers
+				Provides layer 3 service across the backbone.
+	NETWORK VIRTUALIZATION
+		ACCESS CONTROL
+			Help ensure that legitimate users & devices are recognized. Protocols such as 802.1x.
+		PATH ISOLATION
+			Helps ensure that users and devices are mapped to the correct set of resources, effectively, the right VPN i.e. GRE tunnels, VPN
+		SERVICES EDGE
+			Helps ensure right services are accessible to users and devices with centralized policy enforcement.
 
 EVOLUTION OF INTELLIGENT NETWORKS
 	CLOUD COMPUTING
@@ -122,17 +177,26 @@ EVOLUTION OF INTELLIGENT NETWORKS
 				Common software application such as databases and web servers. (i.e. AWS)
 	NETWORK PROGRAMMING
 		Currently, routers and switches are devices that are not virtualized. Network programming virtualizes the physical ports of these devices.
-		OLD NETWORK
+		TRADITIONAL NETWORK
 			DATA/FORWARDING PLANE
 				Responsible for forwarding frames from its enter/exit interfaces using protocols managed in the control plane
 				Data is received, the destination interface is looked up, and the forwarding of frames and packets happens.
 				Data plane relies completely on the control plane to provide information.
 			CONTROL PLANE
 				Responsible for managing and controlling any forwarding table that the data plane uses. (i.e. routing protocols like OSPF, EIGRP, RIP, IPv4, ARP, STP)
-		NEW NETWORK
+		SDN ARCHITECTURE
 			API
 				Software Defined Networking (SDN) manages the network like a WLAN controller manage APs.
 				SDN have a central controller managing the devices which provides automatic configuration and remdiation of all devices.
+				SOUTHBOUND APIS
+					Used for communication between controllers and network devices.
+					OpenFlow
+					NETCONF
+					onePK
+					OpFlex
+				NORTHBOUND APIS
+					Used for communication between controllers and applications.
+					There are usually multiple northbound APIs for per connection between controllers and applications.
 			DATA PLANE
 				Contains network elements, meaning physical or virtual devices that deals with data traffic.
 			CONTROL PLANE
@@ -184,6 +248,26 @@ EVOLUTION OF INTELLIGENT NETWORKS
 					WRED drops packets based on "Precedence (IP Prec)" or "Differentiated Services Code Point (DSCP)"
 		TRUST BOUNDARY
 			Borders of network whereby packet markings (identify traffic such as voice, data, video) are not trusted.
+AAA
+	802.1X
+		COMMANDS
+			aaa new-model
+			aaa authentication dot1x default
+			dot1x system-auth-control
+				Enable 802.1x authentication globally on the switch.
+			int > dot1x port-control auto/force-authorized/force-unauthorized
+				Enable 802.1x authentication on the port.
+				auto = enable authentication
+				force-authorized = authorize host without any 802.1x authentication
+				force-unauthorized = never allow authentication for connected host
+	TACACS+
+		COMMANDS
+			tacacs-server host (ip)
+			tacacs-server key x
+	RADIUS
+		COMMANDS
+			radius-server host (ip)
+			radius-server key x
 OSPF/EIGRP
 	ADJACENCY REQUIREMENTS
 							EIGRP	OSPF
@@ -216,16 +300,16 @@ OSPF
 			Sent by every router to every other connected router in the area. (i.e. point to point routers)
 			If the router is an ABR, then it will send LSAs to all neighbors in all the areas.
 			Contains information about its own interfaces as well as adjacent neighbors
-		TYPE 2 (NETWORK LINK AD)
+		TYPE 2 (NETWORK LINK AD) (e.g. DBD)
 			Generated by DRs towards all routers in the same area. (i.e. routers connected to a switch)
 			Contains information about the state of the other routers in the same network.
-		TYPE 3 (SUMMARY LINK AD)
+		TYPE 3 (SUMMARY LINK AD) (e.g. Link State Request (LSR))
 			Generated by ABRs towards area external to the source (i.e. area 1 > area 0 && area 0 > area 1).
 			Contains network information and inter-area routes to the backbone area.
-		TYPE 4 (ASBR SUMMARY LSA)
+		TYPE 4 (ASBR SUMMARY LSA) (e.g. Link State Update (LSU))
 			Generated by ABRs towards the area external to the source (i.e. area 1 > area 0 && area 0 > area 1).
 			Similar to summary LSAs like Type 3 but Type 4 is specifically used to inform the rest of the OSPF area how to get to the ASBR.
-		TYPE 5 (EXTERNAL LINK/AS AD)
+		TYPE 5 (EXTERNAL LINK/AS AD) (e.g. Link State Acknowledgement (LSAck))
 			Generated by ASBR to advertise routes external to the OSPF AS
 			A Type 5 LSA is generated for each individual external network advertised by the ASBR
 			Flooded everywhere.
@@ -244,7 +328,8 @@ OSPF
 		ipv6 router ospf x
 		int > ipv6 ospf x area x
 	ETC
-		Routers will not communicate if MTU mismatch is detected during the DBD packet exchange
+		Routers will not communicate if MTU mismatch is detected during the DBD packet exchange.
+		Can be ignored if "ip ospf mtu-ignore" is issued.
 EIGRP
 	ROUTE CALCULATION
 		Lowest FD route will be chosen. If FD is the same, the oldest route will be chosen.
@@ -394,10 +479,13 @@ STP
 		sh spanning-tree
 		sh spanning-tree summary
 ETHERCHANNEL
+	Logical bundling of 2-8 parallel trunk ports running between two switches.
 	LACP
 		IEEE 802.3ad
+		Passive/Active states
 	PAgP
 		Cisco proprietary
+		Desirable/Auto states
 	REQUIREMENTS
 		Same speed
 		Same duplex

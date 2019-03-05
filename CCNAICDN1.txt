@@ -1,4 +1,23 @@
+NTP
+	COMMANDS
+		ntp server (ip address)
+			Configure at client to point to NTP server.
+		ntp master
+			Configure current device to be NTP server.
+			Default stratum is 8. The lower the stratum, the closer it is to the time source.
+		ntp peer (ip address)
 SWITCHING
+	MTU FRAME SIZES
+				SIZE
+		NORMAL MTU	1500 BYTES
+		JUMBO		9216 BYTES
+		BABY GIANT	1600 BYTES
+		RUNT		LESS THAN 64 BYTES (BAD FCS)
+		COMMANDS
+			system mtu (bytes) global
+				Change MTU sizes on Ethernet/Fast Ethernet interfaces
+			system mtu jumbo (bytes) global
+				Change MTU sizes on Gigabit Ethernet interfaces.
 	FRAME PROCESSING
 		STORE-AND-FORWARD
 			Switch stores entire frame and checks FCS to determine data corruption before forwarding
@@ -9,6 +28,12 @@ SWITCHING
 	CONTENT ADDRESSABLE MEMORY (CAM) TABLE
 		Stores information of incoming frames (source MAC addresses, switch port the frame arrived on, associated VLAN parameter.)
 IP ROUTING
+	GATEWAY OF LAST RESORT
+		If no routes can be found for a packet, a router will forward it to the gateway of last resort.
+		COMMANDS
+			ip default-gateway
+			ip default-network
+			ip route 0.0.0.0 0.0.0.0
 	ADMINISTRATIVE DISTANCE
 		Connected		0
 		Static			1
